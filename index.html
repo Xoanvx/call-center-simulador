@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Center UTP - Simulador</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            background: #ecf0f1;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .nav-tab.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .nav-tab:hover {
+            background: #2980b9;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .metric {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #3498db;
+            margin: 1rem 0;
+        }
+
+        .estado-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .en-curso { background: #f39c12; }
+        .finalizada { background: #27ae60; }
+        .por-finalizar { background: #e74c3c; }
+
+        .acciones {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .btn-principal {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-principal:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-reiniciar {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-reiniciar:hover {
+            background: #c0392b;
+        }
+
+        .tabla-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #2c3e50;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .estado-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .notificacion {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #27ae60;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 Call Center UTP</h1>
+            <p>Simulador de Llamadas Académico</p>
+        </header>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="mostrarTab('dashboard')">📊 Dashboard</button>
+            <button class="nav-tab" onclick="mostrarTab('resumen')">📈 Resumen</button>
+            <button class="nav-tab" onclick="mostrarTab('tabla')">📋 Tabla</button>
+        </div>
+
+        <!-- TAB DASHBOARD -->
+        <div id="dashboard" class="tab-content active">
+            <div class="dashboard">
+                <div class="card">
+                    <h3>📞 Total de Llamadas</h3>
+                    <div class="metric" id="total-llamadas">50</div>
+                </div>
+                
+                <div class="card">
+                    <h3>⏱️ Duración Promedio</h3>
+                    <div class="metric" id="duracion-promedio">245s</div>
+                </div>
+                
+                <div class="card">
+                    <h3>👥 Agentes Activos</h3>
+                    <div class="metric" id="agentes-activos">8</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>📊 Estados de Llamadas</h3>
+                <div class="estado-item en-curso">
+                    <span>🟡 En curso</span>
+                    <span id="count-en-curso">15</span>
+                </div>
+                <div class="estado-item finalizada">
+                    <span>🟢 Finalizadas</span>
+                    <span id="count-finalizadas">30</span>
+                </div>
+                <div class="estado-item por-finalizar">
+                    <span>🔴 Por finalizar</span>
+                    <span id="count-por-finalizar">5</span>
+                </div>
+            </div>
+            
+            <div class="acciones">
+                <button class="btn btn-principal" onclick="simularNuevaLlamada()" id="btn-simular">
+                    🔄 Simular Nueva Llamada
+                </button>
+                <button class="btn btn-reiniciar" onclick="reiniciarDatos()" id="btn-reiniciar" style="display: none;">
+                    ↩️ Volver a Datos Iniciales
+                </button>
+            </div>
+        </div>
+
+        <!-- TAB RESUMEN -->
+        <div id="resumen" class="tab-content">
+            <div class="dashboard">
+                <div class="card">
+                    <h3>📊 Métricas Detalladas</h3>
+                    <ul id="metricas-detalladas">
+                        <li>Total de llamadas: <strong>50</strong></li>
+                        <li>Agentes únicos: <strong>8</strong></li>
+                        <li>Duración promedio: <strong>245s</strong></li>
+                        <li>Llamada más larga: <strong>589s</strong></li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3>📈 Distribución Porcentual</h3>
+                    <div id="distribucion-porcentual">
+                        <div class="estado-item en-curso">En curso: 30%</div>
+                        <div class="estado-item finalizada">Finalizadas: 60%</div>
+                        <div class="estado-item por-finalizar">Por finalizar: 10%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB TABLA -->
+        <div id="tabla" class="tab-content">
+            <h3>📋 Lista Completa de Llamadas</h3>
+            <div class="tabla-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Agente</th>
+                            <th>Duración</th>
+                            <th>Estado</th>
+                            <th>Hora Inicio</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-llamadas">
+                        <!-- Se llena dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let datosOriginales = null;
+        let datosActuales = null;
+        let esTemporalActivo = false;
+
+        // Nombres de agentes
+        const AGENTES = [
+            "Ana García", "Carlos López", "María Rodríguez", "Juan Pérez", 
+            "Laura Martín", "Diego Silva", "Carmen Ruiz", "Roberto Torres", 
+            "Elena Vásquez", "Miguel Herrera"
+        ];
+
+        const ESTADOS = ["En curso", "Finalizada", "Por finalizar"];
+
+        // Inicializar cuando carga la página
+        window.onload = function() {
+            console.log("🚀 Iniciando simulador...");
+            generarDatosIniciales();
+            actualizarInterfaz();
+        };
+
+        function generarDatosIniciales() {
+            console.log("📊 Generando datos iniciales...");
+            datosOriginales = generarLlamadas(50);
+            datosActuales = [...datosOriginales];
+        }
+
+        function generarLlamadas(cantidad) {
+            const llamadas = [];
+            
+            for (let i = 0; i < cantidad; i++) {
+                const agente = AGENTES[Math.floor(Math.random() * AGENTES.length)];
+                const duracion = Math.floor(Math.random() * 570) + 30; // 30-600 segundos
+                const estado = ESTADOS[Math.floor(Math.random() * ESTADOS.length)];
+                const hora = generarHora();
+                
+                llamadas.push({
+                    id: `CALL-${(i + 1).toString().padStart(3, '0')}`,
+                    agente: agente,
+                    duracion: duracion,
+                    estado: estado,
+                    hora_inicio: hora
+                });
+            }
+            
+            console.log(`✅ Generadas ${cantidad} llamadas`);
+            return llamadas;
+        }
+
+        function generarHora() {
+            const hora = Math.floor(Math.random() * 9) + 8; // 8-16
+            const minuto = Math.floor(Math.random() * 60);
+            const segundo = Math.floor(Math.random() * 60);
+            return `${hora.toString().padStart(2, '0')}:${minuto.toString().padStart(2, '0')}:${segundo.toString().padStart(2, '0')}`;
+        }
+
+        function simularNuevaLlamada() {
+            console.log("🔄 Simulando nueva llamada...");
+            
+            const btn = document.getElementById('btn-simular');
+            btn.textContent = '⏳ Generando...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                // Generar nuevos datos
+                const nuevaCantidad = Math.floor(Math.random() * 30) + 40; // 40-70
+                datosActuales = generarLlamadas(nuevaCantidad);
+                esTemporalActivo = true;
+                
+                // Actualizar interfaz
+                actualizarInterfaz();
+                
+                // Mostrar botón reiniciar
+                document.getElementById('btn-reiniciar').style.display = 'inline-block';
+                
+                // Restaurar botón
+                btn.textContent = '🔄 Simular Nueva Llamada';
+                btn.disabled = false;
+                
+                // Mostrar notificación
+                mostrarNotificacion('✅ ¡Nuevos datos generados!');
+                
+                console.log("✅ Simulación completada");
+            }, 1000);
+        }
+
+        function reiniciarDatos() {
+            console.log("↩️ Reiniciando datos...");
+            
+            datosActuales = [...datosOriginales];
+            esTemporalActivo = false;
+            
+            actualizarInterfaz();
+            document.getElementById('btn-reiniciar').style.display = 'none';
+            
+            mostrarNotificacion('🔄 Datos originales restaurados');
+        }
+
+        function actualizarInterfaz() {
+            console.log("🔄 Actualizando interfaz...");
+            
+            const stats = calcularEstadisticas(datosActuales);
+            
+            // Actualizar dashboard
+            document.getElementById('total-llamadas').textContent = stats.total;
+            document.getElementById('duracion-promedio').textContent = stats.duracionPromedio + 's';
+            document.getElementById('agentes-activos').textContent = stats.agentesUnicos;
+            
+            document.getElementById('count-en-curso').textContent = stats.enCurso;
+            document.getElementById('count-finalizadas').textContent = stats.finalizadas;
+            document.getElementById('count-por-finalizar').textContent = stats.porFinalizar;
+            
+            // Actualizar resumen
+            actualizarResumen(stats);
+            
+            // Actualizar tabla
+            actualizarTabla(datosActuales);
+        }
+
+        function calcularEstadisticas(llamadas) {
+            const total = llamadas.length;
+            const duracionTotal = llamadas.reduce((sum, llamada) => sum + llamada.duracion, 0);
+            const duracionPromedio = Math.round(duracionTotal / total);
+            
+            const agentesUnicos = new Set(llamadas.map(l => l.agente)).size;
+            
+            const estados = { 'En curso': 0, 'Finalizada': 0, 'Por finalizar': 0 };
+            llamadas.forEach(llamada => estados[llamada.estado]++);
+            
+            const duracionMaxima = Math.max(...llamadas.map(l => l.duracion));
+            
+            return {
+                total,
+                duracionPromedio,
+                agentesUnicos,
+                enCurso: estados['En curso'],
+                finalizadas: estados['Finalizada'],
+                porFinalizar: estados['Por finalizar'],
+                duracionMaxima
+            };
+        }
+
+        function actualizarResumen(stats) {
+            const metricas = document.getElementById('metricas-detalladas');
+            metricas.innerHTML = `
+                <li>Total de llamadas: <strong>${stats.total}</strong></li>
+                <li>Agentes únicos: <strong>${stats.agentesUnicos}</strong></li>
+                <li>Duración promedio: <strong>${stats.duracionPromedio}s</strong></li>
+                <li>Llamada más larga: <strong>${stats.duracionMaxima}s</strong></li>
+            `;
+            
+            const porcentajes = document.getElementById('distribucion-porcentual');
+            const pEnCurso = ((stats.enCurso / stats.total) * 100).toFixed(1);
+            const pFinalizadas = ((stats.finalizadas / stats.total) * 100).toFixed(1);
+            const pPorFinalizar = ((stats.porFinalizar / stats.total) * 100).toFixed(1);
+            
+            porcentajes.innerHTML = `
+                <div class="estado-item en-curso">En curso: ${pEnCurso}%</div>
+                <div class="estado-item finalizada">Finalizadas: ${pFinalizadas}%</div>
+                <div class="estado-item por-finalizar">Por finalizar: ${pPorFinalizar}%</div>
+            `;
+        }
+
+        function actualizarTabla(llamadas) {
+            const tbody = document.getElementById('tabla-llamadas');
+            tbody.innerHTML = '';
+            
+            llamadas.forEach(llamada => {
+                const fila = document.createElement('tr');
+                const claseEstado = llamada.estado.toLowerCase().replace(' ', '-');
+                const duracionFormateada = formatearDuracion(llamada.duracion);
+                
+                fila.innerHTML = `
+                    <td>${llamada.id}</td>
+                    <td>${llamada.agente}</td>
+                    <td>${duracionFormateada}</td>
+                    <td><span class="estado-badge ${claseEstado}">${llamada.estado}</span></td>
+                    <td>${llamada.hora_inicio}</td>
+                `;
+                tbody.appendChild(fila);
+            });
+        }
+
+        function formatearDuracion(segundos) {
+            const minutos = Math.floor(segundos / 60);
+            const segs = segundos % 60;
+            return `${minutos.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
+        }
+
+        function mostrarTab(tabName) {
+            // Ocultar todos los tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remover clase active de botones
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Mostrar tab seleccionado
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function mostrarNotificacion(mensaje) {
+            const notif = document.createElement('div');
+            notif.className = 'notificacion';
+            notif.textContent = mensaje;
+            document.body.appendChild(notif);
+            
+            setTimeout(() => {
+                notif.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

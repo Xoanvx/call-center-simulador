@@ -1,0 +1,6 @@
+id,agente,duracion,estado,hora_inicio
+CALL-001,Ana García,245,Finalizada,09:15:32
+CALL-002,Carlos López,156,En curso,10:22:18
+CALL-003,María Rodríguez,389,Finalizada,11:45:07
+CALL-004,Juan Pérez,78,Por finalizar,14:33:21
+CALL-005,Laura Martín,567,Finalizada,15:18:45

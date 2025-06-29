@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabla de Llamadas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .estado {
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: white;
+        }
+
+        .estado.en-curso {
+            background-color: #4CAF50;
+        }
+
+        .estado.finalizada {
+            background-color: #008CBA;
+        }
+
+        .estado.en-espera {
+            background-color: #f44336;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Tabla de Llamadas</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Agente</th>
+                <th>Duración</th>
+                <th>Estado</th>
+                <th>Hora de Inicio</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Aquí se insertarán las filas de la tabla -->
+        </tbody>
+    </table>
+
+    <script>
+// Cargar datos temporales si existen
+window.addEventListener('load', function() {
+    const datosTemp = sessionStorage.getItem('datosTemporales');
+    if (datosTemp) {
+        const datos = JSON.parse(datosTemp);
+        actualizarTabla(datos.llamadas);
+    }
+});
+
+function actualizarTabla(llamadas) {
+    const tbody = document.querySelector('tbody');
+    tbody.innerHTML = '';
+    
+    llamadas.forEach(llamada => {
+        const claseEstado = llamada.estado.toLowerCase().replace(' ', '-');
+        const duracionFormateada = formatearDuracion(llamada.duracion);
+        
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+            <td>${llamada.id}</td>
+            <td>${llamada.agente}</td>
+            <td>${duracionFormateada}</td>
+            <td><span class="estado ${claseEstado}">${llamada.estado}</span></td>
+            <td>${llamada.hora_inicio}</td>
+        `;
+        tbody.appendChild(fila);
+    });
+}
+
+function formatearDuracion(segundos) {
+    const minutos = Math.floor(segundos / 60);
+    const segundosRestantes = segundos % 60;
+    return `${minutos.toString().padStart(2, '0')}:${segundosRestantes.toString().padStart(2, '0')}`;
+}
+</script>
+</body>
+</html>
