@@ -143,6 +143,15 @@
             background: #c0392b;
         }
 
+        .btn-activar {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-activar:hover {
+            background: #229954;
+        }
+
         .tabla-container {
             overflow-x: auto;
         }
@@ -196,6 +205,40 @@
             opacity: 0.6;
             pointer-events: none;
         }
+
+        .llamada-activa {
+            background-color: #fff3cd !important;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { background-color: #fff3cd; }
+            50% { background-color: #ffeaa7; }
+            100% { background-color: #fff3cd; }
+        }
+
+        .estado-badge.en-curso {
+            background-color: #f39c12;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.7; }
+        }
+
+        .timer-status {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .timer-active {
+            background: #27ae60;
+        }
     </style>
 </head>
 <body>
@@ -213,6 +256,10 @@
 
         <!-- TAB DASHBOARD -->
         <div id="dashboard" class="tab-content active">
+            <div class="timer-status" id="timer-status">
+                ⏸️ Timer inactivo - Presiona "Activar Timer" para que todas las llamadas avancen en tiempo real
+            </div>
+
             <div class="dashboard">
                 <div class="card">
                     <h3>📞 Total de Llamadas</h3>
@@ -247,6 +294,9 @@
             </div>
             
             <div class="acciones">
+                <button class="btn btn-activar" onclick="activarTimer()" id="btn-timer">
+                    ▶️ Activar Timer
+                </button>
                 <button class="btn btn-principal" onclick="simularNuevaLlamada()" id="btn-simular">
                     🔄 Simular Nueva Llamada
                 </button>
@@ -306,13 +356,17 @@
         // Variables globales
         let datosOriginales = null;
         let datosActuales = null;
-        let esTemporalActivo = false;
+        let intervalTimer = null;
+        let contadorLlamadas = 0;
+        let timerActivo = false;
 
         // Nombres de agentes
         const AGENTES = [
-            "Ana García", "Carlos López", "María Rodríguez", "Juan Pérez", 
-            "Laura Martín", "Diego Silva", "Carmen Ruiz", "Roberto Torres", 
-            "Elena Vásquez", "Miguel Herrera"
+            "Ana García", "Carlos López", "María Rodríguez", "Juan Pérez", "Laura Martín",
+            "Diego Silva", "Carmen Ruiz", "Roberto Torres", "Elena Vásquez", "Miguel Herrera",
+            "Patricia Morales", "Fernando Castro", "Lucía Jiménez", "Andrés Vargas", "Sofía Mendoza",
+            "Ricardo Flores", "Valentina Rojas", "Gabriel Ortiz", "Isabella Cruz", "Sebastián Reyes",
+            "Camila Guerrero", "Nicolás Ramírez", "Daniela Herrera", "Alejandro Peña", "Mariana Soto"
         ];
 
         const ESTADOS = ["En curso", "Finalizada", "Por finalizar"];
@@ -328,6 +382,12 @@
             console.log("📊 Generando datos iniciales...");
             datosOriginales = generarLlamadas(50);
             datosActuales = [...datosOriginales];
+            
+            // Marcar llamadas no finalizadas como activas para el contador
+            datosActuales.forEach(llamada => {
+                llamada.activa = llamada.estado !== "Finalizada";
+                llamada.tiempoTranscurrido = 0;
+            });
         }
 
         function generarLlamadas(cantidad) {
@@ -359,18 +419,66 @@
             return `${hora.toString().padStart(2, '0')}:${minuto.toString().padStart(2, '0')}:${segundo.toString().padStart(2, '0')}`;
         }
 
+        function activarTimer() {
+            const btn = document.getElementById('btn-timer');
+            const status = document.getElementById('timer-status');
+            
+            if (!timerActivo) {
+                // Activar timer
+                timerActivo = true;
+                btn.textContent = '⏸️ Pausar Timer';
+                btn.classList.remove('btn-activar');
+                btn.classList.add('btn-reiniciar');
+                status.textContent = '▶️ Timer activo - Todas las llamadas avanzan en tiempo real';
+                status.classList.add('timer-active');
+                
+                iniciarTimerTiempoReal();
+                mostrarNotificacion('▶️ Timer activado - Llamadas avanzando');
+            } else {
+                // Pausar timer
+                timerActivo = false;
+                btn.textContent = '▶️ Activar Timer';
+                btn.classList.remove('btn-reiniciar');
+                btn.classList.add('btn-activar');
+                status.textContent = '⏸️ Timer pausado';
+                status.classList.remove('timer-active');
+                
+                if (intervalTimer) {
+                    clearInterval(intervalTimer);
+                    intervalTimer = null;
+                }
+                mostrarNotificacion('⏸️ Timer pausado');
+            }
+        }
+
         function simularNuevaLlamada() {
-            console.log("🔄 Simulando nueva llamada...");
+            console.log("🔄 Agregando 5 nuevas llamadas...");
             
             const btn = document.getElementById('btn-simular');
-            btn.textContent = '⏳ Generando...';
+            btn.textContent = '⏳ Agregando...';
             btn.disabled = true;
             
             setTimeout(() => {
-                // Generar nuevos datos
-                const nuevaCantidad = Math.floor(Math.random() * 30) + 40; // 40-70
-                datosActuales = generarLlamadas(nuevaCantidad);
-                esTemporalActivo = true;
+                // Agregar 5 nuevas llamadas
+                for (let i = 0; i < 5; i++) {
+                    contadorLlamadas++;
+                    const nuevaLlamada = {
+                        id: `CALL-${(datosActuales.length + i + 1).toString().padStart(3, '0')}`,
+                        agente: AGENTES[Math.floor(Math.random() * AGENTES.length)],
+                        duracion: Math.floor(Math.random() * 120) + 30, // Empezar con 30-150 segundos
+                        estado: asignarEstadoInicial(),
+                        hora_inicio: generarHora(),
+                        tiempoTranscurrido: 0,
+                        activa: true
+                    };
+                    
+                    // Si la nueva llamada está finalizada, no debe ser activa
+                    if (nuevaLlamada.estado === "Finalizada") {
+                        nuevaLlamada.activa = false;
+                    }
+                    
+                    datosActuales.push(nuevaLlamada);
+                }
                 
                 // Actualizar interfaz
                 actualizarInterfaz();
@@ -382,18 +490,85 @@
                 btn.textContent = '🔄 Simular Nueva Llamada';
                 btn.disabled = false;
                 
-                // Mostrar notificación
-                mostrarNotificacion('✅ ¡Nuevos datos generados!');
+                mostrarNotificacion('✅ ¡5 nuevas llamadas agregadas!');
                 
-                console.log("✅ Simulación completada");
+                console.log("✅ Nuevas llamadas agregadas");
             }, 1000);
+        }
+
+        function asignarEstadoInicial() {
+            const probabilidades = [0.4, 0.1, 0.5]; // 40% En curso, 10% Por finalizar, 50% Finalizada
+            const random = Math.random();
+            
+            if (random < probabilidades[0]) return "En curso";
+            if (random < probabilidades[0] + probabilidades[1]) return "Por finalizar";
+            return "Finalizada";
+        }
+
+        function iniciarTimerTiempoReal() {
+            if (intervalTimer) {
+                clearInterval(intervalTimer);
+            }
+            
+            intervalTimer = setInterval(() => {
+                if (!timerActivo) return;
+                
+                let huboActualizacion = false;
+                
+                datosActuales.forEach(llamada => {
+                    // Solo actualizar llamadas activas (no finalizadas)
+                    if (llamada.activa && llamada.estado !== "Finalizada") {
+                        llamada.duracion += 1; // Incrementar 1 segundo
+                        llamada.tiempoTranscurrido = (llamada.tiempoTranscurrido || 0) + 1;
+                        huboActualizacion = true;
+                        
+                        // Verificar cambios de estado por duración
+                        if (llamada.duracion >= 600) { // 10 minutos = 600 segundos
+                            llamada.estado = "Finalizada";
+                            llamada.activa = false;
+                            console.log(`📞 Llamada ${llamada.id} finalizada por tiempo límite (10 min)`);
+                            mostrarNotificacion(`📞 Llamada ${llamada.id} finalizada automáticamente`);
+                        } else if (llamada.duracion >= 480 && llamada.estado === "En curso") { // 8 minutos = 480 segundos
+                            llamada.estado = "Por finalizar";
+                            console.log(`⚠️ Llamada ${llamada.id} marcada como 'Por finalizar' (8 min)`);
+                        }
+                    }
+                });
+                
+                if (huboActualizacion) {
+                    actualizarInterfaz();
+                }
+            }, 1000); // Actualizar cada segundo
         }
 
         function reiniciarDatos() {
             console.log("↩️ Reiniciando datos...");
             
+            // Detener timer
+            if (intervalTimer) {
+                clearInterval(intervalTimer);
+                intervalTimer = null;
+            }
+            
+            // Resetear estado del timer
+            timerActivo = false;
+            const btn = document.getElementById('btn-timer');
+            const status = document.getElementById('timer-status');
+            btn.textContent = '▶️ Activar Timer';
+            btn.classList.remove('btn-reiniciar');
+            btn.classList.add('btn-activar');
+            status.textContent = '⏸️ Timer inactivo - Presiona "Activar Timer" para que todas las llamadas avancen en tiempo real';
+            status.classList.remove('timer-active');
+            
+            // Restaurar datos originales
             datosActuales = [...datosOriginales];
-            esTemporalActivo = false;
+            contadorLlamadas = 0;
+            
+            // Marcar llamadas no finalizadas como activas
+            datosActuales.forEach(llamada => {
+                llamada.activa = llamada.estado !== "Finalizada";
+                llamada.tiempoTranscurrido = 0;
+            });
             
             actualizarInterfaz();
             document.getElementById('btn-reiniciar').style.display = 'none';
@@ -474,6 +649,11 @@
                 const fila = document.createElement('tr');
                 const claseEstado = llamada.estado.toLowerCase().replace(' ', '-');
                 const duracionFormateada = formatearDuracion(llamada.duracion);
+                
+                // Agregar clase especial para llamadas activas
+                if (llamada.activa && llamada.estado !== "Finalizada") {
+                    fila.classList.add('llamada-activa');
+                }
                 
                 fila.innerHTML = `
                     <td>${llamada.id}</td>
