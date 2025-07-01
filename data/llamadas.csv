@@ -1,6 +1,51 @@
 id,agente,duracion,estado,hora_inicio
-CALL-001,Ana García,245,Finalizada,09:15:32
-CALL-002,Carlos López,156,En curso,10:22:18
-CALL-003,María Rodríguez,389,Finalizada,11:45:07
-CALL-004,Juan Pérez,78,Por finalizar,14:33:21
-CALL-005,Laura Martín,567,Finalizada,15:18:45
+CALL-001,Juan Pérez,35,Finalizada,14:48:16
+CALL-002,Laura Martín,102,Finalizada,14:15:50
+CALL-003,Carlos López,243,Finalizada,12:56:07
+CALL-004,Diego Silva,122,Por finalizar,14:27:33
+CALL-005,Miguel Herrera,457,Finalizada,11:55:31
+CALL-006,Carmen Ruiz,380,En curso,10:55:13
+CALL-007,Miguel Herrera,379,En curso,15:16:20
+CALL-008,Ana García,574,Finalizada,16:43:48
+CALL-009,Roberto Torres,242,Por finalizar,11:57:37
+CALL-010,Laura Martín,527,En curso,11:04:51
+CALL-011,Carmen Ruiz,99,En curso,15:42:58
+CALL-012,Roberto Torres,526,Finalizada,09:01:47
+CALL-013,Roberto Torres,459,Finalizada,12:46:41
+CALL-014,Diego Silva,127,Finalizada,10:32:48
+CALL-015,Diego Silva,517,Finalizada,09:21:47
+CALL-016,María Rodríguez,540,En curso,09:19:51
+CALL-017,Laura Martín,370,Finalizada,12:06:42
+CALL-018,María Rodríguez,116,Finalizada,14:54:53
+CALL-019,Elena Vásquez,213,Finalizada,09:40:19
+CALL-020,María Rodríguez,336,En curso,12:20:57
+CALL-021,Carmen Ruiz,598,Por finalizar,11:34:46
+CALL-022,Miguel Herrera,124,En curso,15:26:18
+CALL-023,Diego Silva,122,Finalizada,14:03:25
+CALL-024,Diego Silva,498,Finalizada,10:28:33
+CALL-025,Roberto Torres,576,Finalizada,14:41:53
+CALL-026,María Rodríguez,236,Finalizada,13:14:25
+CALL-027,Carmen Ruiz,391,Finalizada,16:28:07
+CALL-028,Juan Pérez,321,Finalizada,15:31:50
+CALL-029,Diego Silva,227,Finalizada,09:42:40
+CALL-030,Miguel Herrera,562,En curso,08:11:17
+CALL-031,Carmen Ruiz,318,Finalizada,12:20:52
+CALL-032,Elena Vásquez,377,Finalizada,16:55:56
+CALL-033,Diego Silva,47,Finalizada,16:14:50
+CALL-034,Juan Pérez,66,Finalizada,11:20:07
+CALL-035,María Rodríguez,495,En curso,13:45:45
+CALL-036,Laura Martín,45,Finalizada,10:30:10
+CALL-037,María Rodríguez,269,Finalizada,11:49:30
+CALL-038,Diego Silva,263,Finalizada,15:59:40
+CALL-039,María Rodríguez,472,Finalizada,10:09:49
+CALL-040,Diego Silva,41,En curso,10:35:47
+CALL-041,Carlos López,174,Por finalizar,15:08:36
+CALL-042,Diego Silva,461,Finalizada,08:30:37
+CALL-043,Miguel Herrera,538,En curso,11:10:25
+CALL-044,Ana García,419,Finalizada,11:09:01
+CALL-045,Carmen Ruiz,510,Finalizada,13:21:29
+CALL-046,Miguel Herrera,216,En curso,10:00:01
+CALL-047,María Rodríguez,303,Finalizada,10:06:54
+CALL-048,Roberto Torres,535,Finalizada,10:22:14
+CALL-049,Carmen Ruiz,76,En curso,11:08:23
+CALL-050,Carlos López,141,Finalizada,09:58:41

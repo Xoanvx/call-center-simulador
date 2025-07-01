@@ -3,288 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Control</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        .container {
-            width: 80%;
-            margin: 20px auto;
-        }
-
-        .dashboard {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-        }
-
-        .card {
-            background-color: #fff;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .card h3 {
-            margin-top: 0;
-        }
-
-        .metric {
-            font-size: 2em;
-            color: #333;
-        }
-
-        .estado {
-            background-color: #fff;
-            border-radius: 5px;
-            padding: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 10px;
-        }
-
-        .acciones {
-            text-align: center;
-        }
-
-        .btn-principal {
-            background-color: #5cb85c;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-        }
-
-        .btn-principal:hover {
-            background-color: #449d44;
-        }
-
-        .btn-reiniciar {
-            background-color: #337ab7;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-            margin-left: 10px;
-        }
-
-        .btn-reiniciar:hover {
-            background-color: #235a81;
-        }
-
-        .notificacion {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #dff0d8;
-            color: #3c763d;
-            border: 1px solid #d6e9c6;
-            padding: 10px 20px;
-            border-radius: 5px;
-            z-index: 1000;
-        }
-    </style>
+    <title>Call Center UTP - Simulador</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Panel de Control</h1>
-
+    <header>
+        <h1>🎯 Call Center UTP</h1>
+        <p>Simulador de Llamadas Académico</p>
+    </header>
+    
+    <nav>
+        <a href="inicio.html" class="active">Inicio</a>
+        <a href="resumen.html">Resumen</a>
+        <a href="tabla.html">Tabla de Llamadas</a>
+    </nav>
+    
+    <main>
         <div class="dashboard">
             <div class="card">
-                <h3>Total de Llamadas</h3>
-                <div class="metric">125</div>
+                <h3>📞 Total de Llamadas</h3>
+                <div class="metric">50</div>
             </div>
+            
             <div class="card">
-                <h3>Duración Promedio</h3>
-                <div class="metric">120s</div>
+                <h3>⏱️ Duración Promedio</h3>
+                <div class="metric">315.7s</div>
+            </div>
+            
+            <div class="card">
+                <h3>📊 Estados</h3>
+                <div class="estados">
+                    <div class="estado en-curso">En curso: 13</div>
+                    <div class="estado finalizada">Finalizadas: 33</div>
+                    <div class="estado por-finalizar">Por finalizar: 4</div>
+                </div>
             </div>
         </div>
-
-        <div class="estado en-curso">En curso: 10</div>
-        <div class="estado finalizada">Finalizadas: 100</div>
-        <div class="estado por-finalizar">Por finalizar: 15</div>
-
+        
         <div class="acciones">
-            <button class="btn-principal" onclick="simularNuevaLlamada()">Simular Nueva Llamada</button>
+            <button onclick="simularNuevaLlamada()" class="btn-principal">
+                🔄 Simular Nueva Llamada
+            </button>
         </div>
-    </div>
-
+    </main>
+    
     <script>
-        // Datos iniciales (se cargan al inicio)
-        let datosIniciales = null;
-        let datosTemporales = null;
-
-        // Nombres de agentes para simulación
-        const NOMBRES_AGENTES = [
-            "Ana García", "Carlos López", "María Rodríguez", "Juan Pérez", "Laura Martín",
-            "Diego Silva", "Carmen Ruiz", "Roberto Torres", "Elena Vásquez", "Miguel Herrera"
-        ];
-
-        const ESTADOS_LLAMADA = ["En curso", "Finalizada", "Por finalizar"];
-
-        // Guardar datos iniciales al cargar la página
-        window.addEventListener('load', function() {
-            if (!datosIniciales) {
-                datosIniciales = {
-                    total: parseInt(document.querySelector('.dashboard .card:nth-child(1) .metric').textContent),
-                    duracion_promedio: parseFloat(document.querySelector('.dashboard .card:nth-child(2) .metric').textContent.replace('s', '')),
-                    en_curso: parseInt(document.querySelector('.estado.en-curso').textContent.split(':')[1].trim()),
-                    finalizadas: parseInt(document.querySelector('.estado.finalizada').textContent.split(':')[1].trim()),
-                    por_finalizar: parseInt(document.querySelector('.estado.por-finalizar').textContent.split(':')[1].trim())
-                };
-                
-                // Guardar en sessionStorage
-                sessionStorage.setItem('datosIniciales', JSON.stringify(datosIniciales));
-            }
-            
-            // Verificar si hay datos temporales
-            const datosTemp = sessionStorage.getItem('datosTemporales');
-            if (datosTemp) {
-                datosTemporales = JSON.parse(datosTemp);
-                actualizarInterfaz(datosTemporales);
-                mostrarBotonReiniciar();
-            }
-        });
-
-        function generarHoraRealista() {
-            const hora = Math.floor(Math.random() * 9) + 8; // 8-16
-            const minuto = Math.floor(Math.random() * 60);
-            const segundo = Math.floor(Math.random() * 60);
-            return `${hora.toString().padStart(2, '0')}:${minuto.toString().padStart(2, '0')}:${segundo.toString().padStart(2, '0')}`;
-        }
-
-        function generarLlamadasTemporales(numLlamadas = 50) {
-            const llamadas = [];
-            
-            for (let i = 0; i < numLlamadas; i++) {
-                const agente = NOMBRES_AGENTES[Math.floor(Math.random() * NOMBRES_AGENTES.length)];
-                const duracion = Math.floor(Math.random() * 570) + 30; // 30-600 segundos
-                const estado = ESTADOS_LLAMADA[Math.floor(Math.random() * ESTADOS_LLAMADA.length)];
-                const horaInicio = generarHoraRealista();
-                
-                llamadas.push({
-                    id: `TEMP-${(i+1).toString().padStart(3, '0')}`,
-                    agente: agente,
-                    duracion: duracion,
-                    estado: estado,
-                    hora_inicio: horaInicio
-                });
-            }
-            
-            return llamadas;
-        }
-
-        function calcularEstadisticasTemporales(llamadas) {
-            const total = llamadas.length;
-            const duracionPromedio = llamadas.reduce((sum, llamada) => sum + llamada.duracion, 0) / total;
-            
-            const estados = {
-                'En curso': 0,
-                'Finalizada': 0,
-                'Por finalizar': 0
-            };
-            
-            llamadas.forEach(llamada => {
-                estados[llamada.estado]++;
-            });
-            
-            return {
-                total: total,
-                duracion_promedio: Math.round(duracionPromedio * 100) / 100,
-                en_curso: estados['En curso'],
-                finalizadas: estados['Finalizada'],
-                por_finalizar: estados['Por finalizar'],
-                llamadas: llamadas
-            };
-        }
-
-        function actualizarInterfaz(datos) {
-            // Actualizar métricas principales
-            document.querySelector('.dashboard .card:nth-child(1) .metric').textContent = datos.total;
-            document.querySelector('.dashboard .card:nth-child(2) .metric').textContent = datos.duracion_promedio + 's';
-            
-            // Actualizar estados
-            document.querySelector('.estado.en-curso').textContent = `En curso: ${datos.en_curso}`;
-            document.querySelector('.estado.finalizada').textContent = `Finalizadas: ${datos.finalizadas}`;
-            document.querySelector('.estado.por-finalizar').textContent = `Por finalizar: ${datos.por_finalizar}`;
-        }
-
-        function mostrarBotonReiniciar() {
-            const accionesDiv = document.querySelector('.acciones');
-            if (!document.querySelector('.btn-reiniciar')) {
-                const btnReiniciar = document.createElement('button');
-                btnReiniciar.className = 'btn-reiniciar';
-                btnReiniciar.textContent = '🔄 Volver a Datos Iniciales';
-                btnReiniciar.onclick = reiniciarDatos;
-                accionesDiv.appendChild(btnReiniciar);
-            }
-        }
-
         function simularNuevaLlamada() {
-            // Mostrar indicador de carga
-            const btn = document.querySelector('.btn-principal');
-            const textoOriginal = btn.textContent;
-            btn.textContent = '⏳ Generando...';
-            btn.disabled = true;
-            
-            setTimeout(() => {
-                // Generar nuevos datos temporales
-                const llamadasTemp = generarLlamadasTemporales(Math.floor(Math.random() * 30) + 40); // 40-70 llamadas
-                datosTemporales = calcularEstadisticasTemporales(llamadasTemp);
-                
-                // Guardar en sessionStorage
-                sessionStorage.setItem('datosTemporales', JSON.stringify(datosTemporales));
-                
-                // Actualizar interfaz
-                actualizarInterfaz(datosTemporales);
-                mostrarBotonReiniciar();
-                
-                // Restaurar botón
-                btn.textContent = textoOriginal;
-                btn.disabled = false;
-                
-                // Mostrar notificación
-                mostrarNotificacion('✅ Nuevos datos generados temporalmente');
-                
-            }, 1000);
-        }
-
-        function reiniciarDatos() {
-            // Limpiar datos temporales
-            sessionStorage.removeItem('datosTemporales');
-            datosTemporales = null;
-            
-            // Restaurar datos iniciales
-            const datosInit = JSON.parse(sessionStorage.getItem('datosIniciales'));
-            actualizarInterfaz(datosInit);
-            
-            // Remover botón de reiniciar
-            const btnReiniciar = document.querySelector('.btn-reiniciar');
-            if (btnReiniciar) {
-                btnReiniciar.remove();
-            }
-            
-            mostrarNotificacion('🔄 Datos iniciales restaurados');
-        }
-
-        function mostrarNotificacion(mensaje) {
-            const notificacion = document.createElement('div');
-            notificacion.className = 'notificacion';
-            notificacion.textContent = mensaje;
-            document.body.appendChild(notificacion);
-            
-            setTimeout(() => {
-                notificacion.remove();
-            }, 3000);
+            alert('Generando nuevos datos...');
+            // En un entorno real, esto ejecutaría el script Python
+            location.reload();
         }
     </script>
 </body>

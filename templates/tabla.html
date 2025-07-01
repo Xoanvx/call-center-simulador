@@ -3,102 +3,387 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabla de Llamadas</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        .estado {
-            padding: 5px 10px;
-            border-radius: 5px;
-            color: white;
-        }
-
-        .estado.en-curso {
-            background-color: #4CAF50;
-        }
-
-        .estado.finalizada {
-            background-color: #008CBA;
-        }
-
-        .estado.en-espera {
-            background-color: #f44336;
-        }
-    </style>
+    <title>Tabla de Llamadas - Call Center UTP</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
 </head>
 <body>
-
-    <h1>Tabla de Llamadas</h1>
-
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Agente</th>
-                <th>Duración</th>
-                <th>Estado</th>
-                <th>Hora de Inicio</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Aquí se insertarán las filas de la tabla -->
-        </tbody>
-    </table>
-
-    <script>
-// Cargar datos temporales si existen
-window.addEventListener('load', function() {
-    const datosTemp = sessionStorage.getItem('datosTemporales');
-    if (datosTemp) {
-        const datos = JSON.parse(datosTemp);
-        actualizarTabla(datos.llamadas);
-    }
-});
-
-function actualizarTabla(llamadas) {
-    const tbody = document.querySelector('tbody');
-    tbody.innerHTML = '';
+    <header>
+        <h1>📋 Tabla de Llamadas</h1>
+    </header>
     
-    llamadas.forEach(llamada => {
-        const claseEstado = llamada.estado.toLowerCase().replace(' ', '-');
-        const duracionFormateada = formatearDuracion(llamada.duracion);
-        
-        const fila = document.createElement('tr');
-        fila.innerHTML = `
-            <td>${llamada.id}</td>
-            <td>${llamada.agente}</td>
-            <td>${duracionFormateada}</td>
-            <td><span class="estado ${claseEstado}">${llamada.estado}</span></td>
-            <td>${llamada.hora_inicio}</td>
-        `;
-        tbody.appendChild(fila);
-    });
-}
-
-function formatearDuracion(segundos) {
-    const minutos = Math.floor(segundos / 60);
-    const segundosRestantes = segundos % 60;
-    return `${minutos.toString().padStart(2, '0')}:${segundosRestantes.toString().padStart(2, '0')}`;
-}
-</script>
+    <nav>
+        <a href="inicio.html">Inicio</a>
+        <a href="resumen.html">Resumen</a>
+        <a href="tabla.html" class="active">Tabla de Llamadas</a>
+    </nav>
+    
+    <main>
+        <div class="tabla-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Agente</th>
+                        <th>Duración</th>
+                        <th>Estado</th>
+                        <th>Hora Inicio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+        <tr>
+            <td>CALL-001</td>
+            <td>Juan Pérez</td>
+            <td>00:35</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>14:48:16</td>
+        </tr>
+        <tr>
+            <td>CALL-002</td>
+            <td>Laura Martín</td>
+            <td>01:42</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>14:15:50</td>
+        </tr>
+        <tr>
+            <td>CALL-003</td>
+            <td>Carlos López</td>
+            <td>04:03</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>12:56:07</td>
+        </tr>
+        <tr>
+            <td>CALL-004</td>
+            <td>Diego Silva</td>
+            <td>02:02</td>
+            <td><span class="estado por-finalizar">Por finalizar</span></td>
+            <td>14:27:33</td>
+        </tr>
+        <tr>
+            <td>CALL-005</td>
+            <td>Miguel Herrera</td>
+            <td>07:37</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>11:55:31</td>
+        </tr>
+        <tr>
+            <td>CALL-006</td>
+            <td>Carmen Ruiz</td>
+            <td>06:20</td>
+            <td><span class="estado en-curso">En curso</span></td>
+            <td>10:55:13</td>
+        </tr>
+        <tr>
+            <td>CALL-007</td>
+            <td>Miguel Herrera</td>
+            <td>06:19</td>
+            <td><span class="estado en-curso">En curso</span></td>
+            <td>15:16:20</td>
+        </tr>
+        <tr>
+            <td>CALL-008</td>
+            <td>Ana García</td>
+            <td>09:34</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>16:43:48</td>
+        </tr>
+        <tr>
+            <td>CALL-009</td>
+            <td>Roberto Torres</td>
+            <td>04:02</td>
+            <td><span class="estado por-finalizar">Por finalizar</span></td>
+            <td>11:57:37</td>
+        </tr>
+        <tr>
+            <td>CALL-010</td>
+            <td>Laura Martín</td>
+            <td>08:47</td>
+            <td><span class="estado en-curso">En curso</span></td>
+            <td>11:04:51</td>
+        </tr>
+        <tr>
+            <td>CALL-011</td>
+            <td>Carmen Ruiz</td>
+            <td>01:39</td>
+            <td><span class="estado en-curso">En curso</span></td>
+            <td>15:42:58</td>
+        </tr>
+        <tr>
+            <td>CALL-012</td>
+            <td>Roberto Torres</td>
+            <td>08:46</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>09:01:47</td>
+        </tr>
+        <tr>
+            <td>CALL-013</td>
+            <td>Roberto Torres</td>
+            <td>07:39</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>12:46:41</td>
+        </tr>
+        <tr>
+            <td>CALL-014</td>
+            <td>Diego Silva</td>
+            <td>02:07</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>10:32:48</td>
+        </tr>
+        <tr>
+            <td>CALL-015</td>
+            <td>Diego Silva</td>
+            <td>08:37</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>09:21:47</td>
+        </tr>
+        <tr>
+            <td>CALL-016</td>
+            <td>María Rodríguez</td>
+            <td>09:00</td>
+            <td><span class="estado en-curso">En curso</span></td>
+            <td>09:19:51</td>
+        </tr>
+        <tr>
+            <td>CALL-017</td>
+            <td>Laura Martín</td>
+            <td>06:10</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>12:06:42</td>
+        </tr>
+        <tr>
+            <td>CALL-018</td>
+            <td>María Rodríguez</td>
+            <td>01:56</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>14:54:53</td>
+        </tr>
+        <tr>
+            <td>CALL-019</td>
+            <td>Elena Vásquez</td>
+            <td>03:33</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>09:40:19</td>
+        </tr>
+        <tr>
+            <td>CALL-020</td>
+            <td>María Rodríguez</td>
+            <td>05:36</td>
+            <td><span class="estado en-curso">En curso</span></td>
+            <td>12:20:57</td>
+        </tr>
+        <tr>
+            <td>CALL-021</td>
+            <td>Carmen Ruiz</td>
+            <td>09:58</td>
+            <td><span class="estado por-finalizar">Por finalizar</span></td>
+            <td>11:34:46</td>
+        </tr>
+        <tr>
+            <td>CALL-022</td>
+            <td>Miguel Herrera</td>
+            <td>02:04</td>
+            <td><span class="estado en-curso">En curso</span></td>
+            <td>15:26:18</td>
+        </tr>
+        <tr>
+            <td>CALL-023</td>
+            <td>Diego Silva</td>
+            <td>02:02</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>14:03:25</td>
+        </tr>
+        <tr>
+            <td>CALL-024</td>
+            <td>Diego Silva</td>
+            <td>08:18</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>10:28:33</td>
+        </tr>
+        <tr>
+            <td>CALL-025</td>
+            <td>Roberto Torres</td>
+            <td>09:36</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>14:41:53</td>
+        </tr>
+        <tr>
+            <td>CALL-026</td>
+            <td>María Rodríguez</td>
+            <td>03:56</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>13:14:25</td>
+        </tr>
+        <tr>
+            <td>CALL-027</td>
+            <td>Carmen Ruiz</td>
+            <td>06:31</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>16:28:07</td>
+        </tr>
+        <tr>
+            <td>CALL-028</td>
+            <td>Juan Pérez</td>
+            <td>05:21</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>15:31:50</td>
+        </tr>
+        <tr>
+            <td>CALL-029</td>
+            <td>Diego Silva</td>
+            <td>03:47</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>09:42:40</td>
+        </tr>
+        <tr>
+            <td>CALL-030</td>
+            <td>Miguel Herrera</td>
+            <td>09:22</td>
+            <td><span class="estado en-curso">En curso</span></td>
+            <td>08:11:17</td>
+        </tr>
+        <tr>
+            <td>CALL-031</td>
+            <td>Carmen Ruiz</td>
+            <td>05:18</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>12:20:52</td>
+        </tr>
+        <tr>
+            <td>CALL-032</td>
+            <td>Elena Vásquez</td>
+            <td>06:17</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>16:55:56</td>
+        </tr>
+        <tr>
+            <td>CALL-033</td>
+            <td>Diego Silva</td>
+            <td>00:47</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>16:14:50</td>
+        </tr>
+        <tr>
+            <td>CALL-034</td>
+            <td>Juan Pérez</td>
+            <td>01:06</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>11:20:07</td>
+        </tr>
+        <tr>
+            <td>CALL-035</td>
+            <td>María Rodríguez</td>
+            <td>08:15</td>
+            <td><span class="estado en-curso">En curso</span></td>
+            <td>13:45:45</td>
+        </tr>
+        <tr>
+            <td>CALL-036</td>
+            <td>Laura Martín</td>
+            <td>00:45</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>10:30:10</td>
+        </tr>
+        <tr>
+            <td>CALL-037</td>
+            <td>María Rodríguez</td>
+            <td>04:29</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>11:49:30</td>
+        </tr>
+        <tr>
+            <td>CALL-038</td>
+            <td>Diego Silva</td>
+            <td>04:23</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>15:59:40</td>
+        </tr>
+        <tr>
+            <td>CALL-039</td>
+            <td>María Rodríguez</td>
+            <td>07:52</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>10:09:49</td>
+        </tr>
+        <tr>
+            <td>CALL-040</td>
+            <td>Diego Silva</td>
+            <td>00:41</td>
+            <td><span class="estado en-curso">En curso</span></td>
+            <td>10:35:47</td>
+        </tr>
+        <tr>
+            <td>CALL-041</td>
+            <td>Carlos López</td>
+            <td>02:54</td>
+            <td><span class="estado por-finalizar">Por finalizar</span></td>
+            <td>15:08:36</td>
+        </tr>
+        <tr>
+            <td>CALL-042</td>
+            <td>Diego Silva</td>
+            <td>07:41</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>08:30:37</td>
+        </tr>
+        <tr>
+            <td>CALL-043</td>
+            <td>Miguel Herrera</td>
+            <td>08:58</td>
+            <td><span class="estado en-curso">En curso</span></td>
+            <td>11:10:25</td>
+        </tr>
+        <tr>
+            <td>CALL-044</td>
+            <td>Ana García</td>
+            <td>06:59</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>11:09:01</td>
+        </tr>
+        <tr>
+            <td>CALL-045</td>
+            <td>Carmen Ruiz</td>
+            <td>08:30</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>13:21:29</td>
+        </tr>
+        <tr>
+            <td>CALL-046</td>
+            <td>Miguel Herrera</td>
+            <td>03:36</td>
+            <td><span class="estado en-curso">En curso</span></td>
+            <td>10:00:01</td>
+        </tr>
+        <tr>
+            <td>CALL-047</td>
+            <td>María Rodríguez</td>
+            <td>05:03</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>10:06:54</td>
+        </tr>
+        <tr>
+            <td>CALL-048</td>
+            <td>Roberto Torres</td>
+            <td>08:55</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>10:22:14</td>
+        </tr>
+        <tr>
+            <td>CALL-049</td>
+            <td>Carmen Ruiz</td>
+            <td>01:16</td>
+            <td><span class="estado en-curso">En curso</span></td>
+            <td>11:08:23</td>
+        </tr>
+        <tr>
+            <td>CALL-050</td>
+            <td>Carlos López</td>
+            <td>02:21</td>
+            <td><span class="estado finalizada">Finalizada</span></td>
+            <td>09:58:41</td>
+        </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
 </body>
 </html>
