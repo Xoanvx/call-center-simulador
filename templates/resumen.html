@@ -1,1 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .barra-container {
+            background-color: #f0f0f0;
+            height: 20px;
+            margin-bottom: 5px;
+            position: relative;
+        }
+        .barra {
+            height: 100%;
+            position: absolute;
+            text-align: center;
+            color: white;
+        }
+        .en-curso {
+            background-color: #007bff;
+        }
+        .finalizada {
+            background-color: #28a745;
+        }
+        .por-finalizar {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
 
+    <h1>Resumen de Llamadas</h1>
+
+    <div class="card">
+        <h2>Métricas Generales</h2>
+        <ul>
+            <li>Total de llamadas: <strong></strong></li>
+            <li>Agentes activos: <strong></strong></li>
+            <li>Duración promedio: <strong></strong></li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Estado de Llamadas</h2>
+        <div class="barra-container">
+            <div class="barra en-curso" style="width: 0%;">En curso: 0 (0%)</div>
+        </div>
+        <div class="barra-container">
+            <div class="barra finalizada" style="width: 0%;">Finalizadas: 0 (0%)</div>
+        </div>
+        <div class="barra-container">
+            <div class="barra por-finalizar" style="width: 0%;">Por finalizar: 0 (0%)</div>
+        </div>
+    </div>
+
+    <script>
+
+window.addEventListener('load', function() {
+    const datosTemp = sessionStorage.getItem('datosTemporales');
+    if (datosTemp) {
+        const datos = JSON.parse(datosTemp);
+        actualizarResumen(datos);
+    }
+});
+
+function actualizarResumen(datos) {
+
+    const metricasLista = document.querySelector('.card ul');
+    metricasLista.innerHTML = `
+        <li>Total de llamadas: <strong>${datos.total}</strong></li>
+        <li>Agentes activos: <strong>${contarAgentesUnicos(datos.llamadas)}</strong></li>
+        <li>Duración promedio: <strong>${datos.duracion_promedio}s</strong></li>
+    `;
+    
+
+    const porcentajeEnCurso = (datos.en_curso / datos.total) * 100;
+    const porcentajeFinalizadas = (datos.finalizadas / datos.total) * 100;
+    const porcentajePorFinalizar = (datos.por_finalizar / datos.total) * 100;
+    
+    document.querySelector('.barra.en-curso').style.width = porcentajeEnCurso + '%';
+    document.querySelector('.barra.en-curso').textContent = `En curso: ${datos.en_curso} (${porcentajeEnCurso.toFixed(1)}%)`;
+    
+    document.querySelector('.barra.finalizada').style.width = porcentajeFinalizadas + '%';
+    document.querySelector('.barra.finalizada').textContent = `Finalizadas: ${datos.finalizadas} (${porcentajeFinalizadas.toFixed(1)}%)`;
+    
+    document.querySelector('.barra.por-finalizar').style.width = porcentajePorFinalizar + '%';
+    document.querySelector('.barra.por-finalizar').textContent = `Por finalizar: ${datos.por_finalizar} (${porcentajePorFinalizar.toFixed(1)}%)`;
+}
+
+function contarAgentesUnicos(llamadas) {
+    const agentes = new Set();
+    llamadas.forEach(llamada => agentes.add(llamada.agente));
+    return agentes.size;
+}
+</script>
+</body>
+</html>
